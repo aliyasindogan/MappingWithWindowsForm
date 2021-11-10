@@ -84,6 +84,7 @@ namespace MappingWithWindowsForm
                     var newGuid = Guid.NewGuid();
                     if (this.pictureBox1.Controls.OfType<Button>().Count() > 0)
                     {
+                        int newMaxDisplayOrder = 0;
                         foreach (Control x in this.pictureBox1.Controls.OfType<Button>())
                         {
                             if (x is Button)
@@ -94,6 +95,19 @@ namespace MappingWithWindowsForm
                                 var top = ((Button)x).Top;
                                 using (DatabaseContext context = new DatabaseContext())
                                 {
+                                    if (!context.Maps.Any(f => f.MapName == txtLocationName.Text))
+                                    {
+                                        var maxDisplayOrder = context.Maps.Max(m => m.DisplayOrder);
+                                        if (maxDisplayOrder == 0)
+                                        {
+                                            newMaxDisplayOrder = 1;
+                                        }
+                                        else
+                                        {
+                                            newMaxDisplayOrder += maxDisplayOrder + 1;
+                                        }
+                                    }
+
                                     Map map = new Map()
                                     {
                                         ButtonName = name,
@@ -101,6 +115,7 @@ namespace MappingWithWindowsForm
                                         X = left,
                                         Y = top,
                                         Guid = newGuid,
+                                        DisplayOrder = newMaxDisplayOrder,
                                     };
                                     if (context.Maps.Any(j => j.ButtonName == map.ButtonName))
                                     {
@@ -110,6 +125,7 @@ namespace MappingWithWindowsForm
                                         mapEntity.ButtonName = map.ButtonName;
                                         mapEntity.MapName = map.MapName;
                                         mapEntity.Guid = map.Guid;
+                                        mapEntity.DisplayOrder = map.DisplayOrder;
                                         context.SaveChanges();
                                     }
                                 }

@@ -86,6 +86,10 @@
     <Compile Include="Migrations\202111102109068_InitialMigration.designer.cs">
       <DependentUpon>202111102109068_InitialMigration.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202111102233019_AddDisplayOrderColumnToMapTable.cs" />
+    <Compile Include="Migrations\202111102233019_AddDisplayOrderColumnToMapTable.designer.cs">
+      <DependentUpon>202111102233019_AddDisplayOrderColumnToMapTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -94,6 +98,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202111102109068_InitialMigration.resx">
       <DependentUpon>202111102109068_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202111102233019_AddDisplayOrderColumnToMapTable.resx">
+      <DependentUpon>202111102233019_AddDisplayOrderColumnToMapTable.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

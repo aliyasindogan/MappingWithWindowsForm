@@ -165,6 +165,7 @@ namespace MappingWithWindowsForm
             this.dataGridViewLocationList.Name = "dataGridViewLocationList";
             this.dataGridViewLocationList.Size = new System.Drawing.Size(778, 130);
             this.dataGridViewLocationList.TabIndex = 3;
+            this.dataGridViewLocationList.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridViewLocationList_CellDoubleClick);
             // 
             // groupBoxLocationList
             // 
@@ -187,6 +188,7 @@ namespace MappingWithWindowsForm
             this.Controls.Add(this.groupBoxLocation);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Windows Form İle Haritalama";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBoxLocation.ResumeLayout(false);

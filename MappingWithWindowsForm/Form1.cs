@@ -1,5 +1,6 @@
 ﻿using MappingWithWindowsForm.Data;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -10,9 +11,9 @@ namespace MappingWithWindowsForm
     {
         #region Defines
 
-        private int counter = 0;
-        private Point newLocation;
-        private string selectedMapName = "";
+        private int _counter = 0;
+        private Point _mouseDownLocation;
+        private string _selectedMapName = "";
 
         #endregion Defines
 
@@ -26,6 +27,7 @@ namespace MappingWithWindowsForm
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            DeleteEmptyRecords();
             DataGridViewFill();
         }
 
@@ -38,11 +40,11 @@ namespace MappingWithWindowsForm
             #region Create Button
 
             Button btn = new Button();
-            counter++;
+            _counter++;
             btn.Text = String.Empty;
             btn.Name = "buttonName-" + Guid.NewGuid().ToString();
             btn.Size = new Size(45, 35);
-            btn.Location = new Point(73, (26 + (counter * 30)));
+            btn.Location = new Point(73, (26 + (_counter * 30)));
             btn.BackColor = Color.White;
             btn.BackgroundImage = ((Image)Properties.Resources.location1);
             btn.BackgroundImageLayout = ImageLayout.Stretch;
@@ -132,10 +134,9 @@ namespace MappingWithWindowsForm
                             }
                         }
                         DataGridViewFill();
+                        ClearControls();
                         this.pictureBox1.Controls.Clear();
-                        txtLeftX.Text = String.Empty;
-                        txtTopY.Text = String.Empty;
-                        txtLocationName.Text = String.Empty;
+
                         MessageBox.Show("Ayarlar Kaydedildi!", "İŞLEM BAŞARILI!", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     }
                     else
@@ -160,8 +161,13 @@ namespace MappingWithWindowsForm
 
         private void Btn_MouseDown(object sender, MouseEventArgs e)
         {
-            //MouseDown fareyle basıldığında MouseUp ise fareden çekildiğinde
-            newLocation = e.Location;
+            if (e.Button == MouseButtons.Left)
+            {
+                //MouseDown fareyle basıldığında MouseUp ise fareden çekildiğinde
+                _mouseDownLocation = e.Location;
+                lblDownX.Text = _mouseDownLocation.X.ToString();
+                lblDownY.Text = _mouseDownLocation.Y.ToString();
+            }
         }
 
         private void Btn_MouseMove(object sender, MouseEventArgs e)
@@ -170,10 +176,26 @@ namespace MappingWithWindowsForm
             Button clickedButton = (Button)sender;
             if (e.Button == MouseButtons.Left)
             {
-                clickedButton.Left += e.X - (newLocation.X); //X
-                clickedButton.Top += e.Y - (newLocation.Y);  //Y
-                txtLeftX.Text = clickedButton.Left.ToString();
-                txtTopY.Text = clickedButton.Top.ToString();
+                if (clickedButton.Left > 5)
+                {
+                    if (clickedButton.Left < 820)
+                    {
+                        clickedButton.Left += e.X - _mouseDownLocation.X; //X
+                        clickedButton.Top += e.Y - _mouseDownLocation.Y;  //Y
+                        lblMoveX.Text = clickedButton.Left.ToString();
+                        lblMoveY.Text = clickedButton.Top.ToString();
+                    }
+                    else
+                    {
+                        clickedButton.Left = 815;
+                        clickedButton.Top = clickedButton.Top;
+                    }
+                }
+                else
+                {
+                    clickedButton.Left = 10;
+                    clickedButton.Top = clickedButton.Top;
+                }
             }
         }
 
@@ -183,8 +205,31 @@ namespace MappingWithWindowsForm
 
         private void dataGridViewLocationList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            selectedMapName = dataGridViewLocationList.Rows[e.RowIndex].Cells[0].Value.ToString();
-            MessageBox.Show(selectedMapName);
+            _selectedMapName = dataGridViewLocationList.Rows[e.RowIndex].Cells[0].Value.ToString();
+            //ClearControls();
+            txtLocationName.Text = _selectedMapName;
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                this.pictureBox1.Controls.Clear();
+                var maps = context.Maps.Where(x => x.MapName == _selectedMapName);
+
+                foreach (var item in maps.ToList())
+                {
+                    Button btn = new Button();
+                    _counter++;
+                    btn.Text = String.Empty;
+                    btn.Name = item.ButtonName;
+                    btn.Size = new Size(45, 35);
+                    btn.Location = new Point((int)item.X, ((int)item.Y));
+                    btn.BackColor = Color.White;
+                    btn.BackgroundImage = ((Image)Properties.Resources.location1);
+                    btn.BackgroundImageLayout = ImageLayout.Stretch;
+                    btn.TabIndex = 1;
+                    this.pictureBox1.Controls.Add(btn);
+                    btn.MouseDown += Btn_MouseDown;
+                    btn.MouseMove += Btn_MouseMove;
+                }
+            }
         }
 
         #endregion DataGridView
@@ -203,6 +248,31 @@ namespace MappingWithWindowsForm
                 dataGridViewLocationList.DataSource = data;
                 dataGridViewLocationList.Columns["MapName"].HeaderText = "Konum Adı";
             }
+        }
+
+        private void ClearControls()
+        {
+            DeleteEmptyRecords();
+            txtLeftX.Text = String.Empty;
+            txtTopY.Text = String.Empty;
+            txtLocationName.Text = String.Empty;
+        }
+
+        private void DeleteEmptyRecords()
+        {
+            using (DatabaseContext context = new DatabaseContext())
+            {
+                var maps = context.Maps.Where(x => x.MapName == String.Empty);
+                context.Maps.RemoveRange(maps);
+                context.SaveChanges();
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            ClearControls();
+            DataGridViewFill();
+            this.pictureBox1.Controls.Clear();
         }
 
         #endregion Methods

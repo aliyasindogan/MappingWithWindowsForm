@@ -24,5 +24,6 @@ namespace MappingWithWindowsForm.Data
         public int? Y { get; set; }
 
         public int DisplayOrder { get; set; }
+        public string ImageUrl { get; set; }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -14,6 +15,7 @@ namespace MappingWithWindowsForm
         private int _counter = 0;
         private Point _mouseDownLocation;
         private string _selectedMapName = "";
+        private string _imageUrl;
 
         #endregion Defines
 
@@ -37,44 +39,51 @@ namespace MappingWithWindowsForm
 
         private void btnNewLocation_Click(object sender, EventArgs e)
         {
-            #region Create Button
-
-            Button btn = new Button();
-            _counter++;
-            btn.Text = String.Empty;
-            btn.Name = "buttonName-" + Guid.NewGuid().ToString();
-            btn.Size = new Size(45, 35);
-            btn.Location = new Point(73, (26 + (_counter * 30)));
-            btn.BackColor = Color.White;
-            btn.BackgroundImage = ((Image)Properties.Resources.location1);
-            btn.BackgroundImageLayout = ImageLayout.Stretch;
-            btn.TabIndex = 1;
-            this.pictureBox1.Controls.Add(btn);
-
-            #endregion Create Button
-
-            #region Save Button
-
-            using (DatabaseContext context = new DatabaseContext())
+            if (!String.IsNullOrEmpty(txtPath.Text))
             {
-                Map map = new Map()
+                #region Create Button
+
+                Button btn = new Button();
+                _counter++;
+                btn.Text = String.Empty;
+                btn.Name = "buttonName-" + Guid.NewGuid().ToString();
+                btn.Size = new Size(45, 35);
+                btn.Location = new Point(73, (26 + (_counter * 30)));
+                btn.BackColor = Color.White;
+                btn.BackgroundImage = ((Image)Properties.Resources.location1);
+                btn.BackgroundImageLayout = ImageLayout.Stretch;
+                btn.TabIndex = 1;
+                this.pictureBox1.Controls.Add(btn);
+
+                #endregion Create Button
+
+                #region Save Button
+
+                using (DatabaseContext context = new DatabaseContext())
                 {
-                    ButtonName = btn.Name,
-                    MapName = String.Empty,
-                    X = null,
-                    Y = null,
-                };
-                if (!context.Maps.Any(x => x.ButtonName == map.ButtonName))
-                {
-                    context.Maps.Add(map);
-                    context.SaveChanges();
+                    Map map = new Map()
+                    {
+                        ButtonName = btn.Name,
+                        MapName = String.Empty,
+                        X = null,
+                        Y = null,
+                    };
+                    if (!context.Maps.Any(x => x.ButtonName == map.ButtonName))
+                    {
+                        context.Maps.Add(map);
+                        context.SaveChanges();
+                    }
                 }
+
+                #endregion Save Button
+
+                btn.MouseDown += Btn_MouseDown;
+                btn.MouseMove += Btn_MouseMove;
             }
-
-            #endregion Save Button
-
-            btn.MouseDown += Btn_MouseDown;
-            btn.MouseMove += Btn_MouseMove;
+            else
+            {
+                MessageBox.Show("Resim alanı boş geçilmez!", "UYARI!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
@@ -83,65 +92,73 @@ namespace MappingWithWindowsForm
             {
                 if (!String.IsNullOrEmpty(txtLocationName.Text))
                 {
-                    var newGuid = Guid.NewGuid();
-                    if (this.pictureBox1.Controls.OfType<Button>().Count() > 0)
+                    if (!String.IsNullOrEmpty(txtPath.Text))
                     {
-                        int newMaxDisplayOrder = 0;
-                        foreach (Control x in this.pictureBox1.Controls.OfType<Button>())
+                        var newGuid = Guid.NewGuid();
+                        if (this.pictureBox1.Controls.OfType<Button>().Count() > 0)
                         {
-                            if (x is Button)
+                            int newMaxDisplayOrder = 0;
+                            foreach (Control x in this.pictureBox1.Controls.OfType<Button>())
                             {
-                                ((Button)x).Text = String.Empty;
-                                var name = ((Button)x).Name;
-                                var left = ((Button)x).Left;
-                                var top = ((Button)x).Top;
-                                using (DatabaseContext context = new DatabaseContext())
+                                if (x is Button)
                                 {
-                                    if (!context.Maps.Any(f => f.MapName == txtLocationName.Text))
+                                    ((Button)x).Text = String.Empty;
+                                    var name = ((Button)x).Name;
+                                    var left = ((Button)x).Left;
+                                    var top = ((Button)x).Top;
+                                    using (DatabaseContext context = new DatabaseContext())
                                     {
-                                        var maxDisplayOrder = context.Maps.Max(m => m.DisplayOrder);
-                                        if (maxDisplayOrder == 0)
+                                        if (!context.Maps.Any(f => f.MapName == txtLocationName.Text))
                                         {
-                                            newMaxDisplayOrder = 1;
+                                            var maxDisplayOrder = context.Maps.Max(m => m.DisplayOrder);
+                                            if (maxDisplayOrder == 0)
+                                            {
+                                                newMaxDisplayOrder = 1;
+                                            }
+                                            else
+                                            {
+                                                newMaxDisplayOrder += maxDisplayOrder + 1;
+                                            }
                                         }
-                                        else
-                                        {
-                                            newMaxDisplayOrder += maxDisplayOrder + 1;
-                                        }
-                                    }
 
-                                    Map map = new Map()
-                                    {
-                                        ButtonName = name,
-                                        MapName = String.IsNullOrEmpty(txtLocationName.Text) ? Guid.NewGuid().ToString() : txtLocationName.Text,
-                                        X = left,
-                                        Y = top,
-                                        Guid = newGuid,
-                                        DisplayOrder = newMaxDisplayOrder,
-                                    };
-                                    if (context.Maps.Any(j => j.ButtonName == map.ButtonName))
-                                    {
-                                        var mapEntity = context.Maps.FirstOrDefault(j => j.ButtonName == map.ButtonName);
-                                        mapEntity.X = map.X;
-                                        mapEntity.Y = map.Y;
-                                        mapEntity.ButtonName = map.ButtonName;
-                                        mapEntity.MapName = map.MapName;
-                                        mapEntity.Guid = map.Guid;
-                                        mapEntity.DisplayOrder = map.DisplayOrder;
-                                        context.SaveChanges();
+                                        Map map = new Map()
+                                        {
+                                            ButtonName = name,
+                                            MapName = String.IsNullOrEmpty(txtLocationName.Text) ? Guid.NewGuid().ToString() : txtLocationName.Text,
+                                            X = left,
+                                            Y = top,
+                                            Guid = newGuid,
+                                            DisplayOrder = newMaxDisplayOrder,
+                                        };
+                                        if (context.Maps.Any(j => j.ButtonName == map.ButtonName))
+                                        {
+                                            var mapEntity = context.Maps.FirstOrDefault(j => j.ButtonName == map.ButtonName);
+                                            mapEntity.X = map.X;
+                                            mapEntity.Y = map.Y;
+                                            mapEntity.ButtonName = map.ButtonName;
+                                            mapEntity.MapName = map.MapName;
+                                            mapEntity.Guid = map.Guid;
+                                            mapEntity.DisplayOrder = map.DisplayOrder;
+                                            mapEntity.ImageUrl = _imageUrl;
+                                            context.SaveChanges();
+                                        }
                                     }
                                 }
                             }
-                        }
-                        DataGridViewFill();
-                        ClearControls();
-                        this.pictureBox1.Controls.Clear();
+                            DataGridViewFill();
+                            ClearControls();
+                            this.pictureBox1.Controls.Clear();
 
-                        MessageBox.Show("Ayarlar Kaydedildi!", "İŞLEM BAŞARILI!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            MessageBox.Show("Ayarlar Kaydedildi!", "İŞLEM BAŞARILI!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Yeni konum oluşturunuz!", "UYARI!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Yeni konum oluşturunuz!", "UYARI!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("Resim alanı boş geçilmez!", "UYARI!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     }
                 }
                 else
@@ -206,13 +223,12 @@ namespace MappingWithWindowsForm
         private void dataGridViewLocationList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             _selectedMapName = dataGridViewLocationList.Rows[e.RowIndex].Cells[0].Value.ToString();
-            //ClearControls();
             txtLocationName.Text = _selectedMapName;
             using (DatabaseContext context = new DatabaseContext())
             {
                 this.pictureBox1.Controls.Clear();
                 var maps = context.Maps.Where(x => x.MapName == _selectedMapName);
-
+                pictureBox1.ImageLocation = maps.Select(x => x.ImageUrl).Distinct().FirstOrDefault();
                 foreach (var item in maps.ToList())
                 {
                     Button btn = new Button();
@@ -256,6 +272,8 @@ namespace MappingWithWindowsForm
             txtLeftX.Text = String.Empty;
             txtTopY.Text = String.Empty;
             txtLocationName.Text = String.Empty;
+            txtPath.Text = String.Empty;
+            pictureBox1.ImageLocation = null;
         }
 
         private void DeleteEmptyRecords()
@@ -276,5 +294,18 @@ namespace MappingWithWindowsForm
         }
 
         #endregion Methods
+
+        private void btnImagePath_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            if (!String.IsNullOrEmpty(openFileDialog1.FileName))
+            {
+                pictureBox1.ImageLocation = openFileDialog1.FileName;
+                txtPath.Text = openFileDialog1.FileName;
+                string imageUploadPath = Application.StartupPath.Replace(@"bin\Debug", @"Images\");
+                File.Copy(txtPath.Text, Path.Combine(imageUploadPath, Path.GetFileName(txtPath.Text)), true);
+                _imageUrl = imageUploadPath + Path.GetFileName(txtPath.Text);
+            }
+        }
     }
 }

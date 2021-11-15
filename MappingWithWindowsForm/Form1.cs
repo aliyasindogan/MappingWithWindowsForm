@@ -31,6 +31,7 @@ namespace MappingWithWindowsForm
         {
             DeleteEmptyRecords();
             DataGridViewFill();
+            btnDelete.Enabled = false;
         }
 
         #endregion Form1
@@ -172,6 +173,42 @@ namespace MappingWithWindowsForm
             }
         }
 
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (!String.IsNullOrEmpty(txtLocationName.Text))
+            {
+                DialogResult dialogResult = MessageBox.Show("Bu konumu silmek istediğinize emin misiniz?", "Dikkat!", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    {
+                        using (DatabaseContext context = new DatabaseContext())
+                        {
+                            var deleted = context.Maps.Where(x => x.MapName == _selectedMapName).ToList();
+                            context.Maps.RemoveRange(deleted);
+                            context.SaveChanges();
+                            ClearControls();
+                            DataGridViewFill();
+                            this.pictureBox1.Controls.Clear();
+                            MessageBox.Show(_selectedMapName + " silindi!", "İŞLEM BAŞARILI!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void btnImagePath_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
+            if (!String.IsNullOrEmpty(openFileDialog1.FileName))
+            {
+                pictureBox1.ImageLocation = openFileDialog1.FileName;
+                txtPath.Text = openFileDialog1.FileName;
+                string imageUploadPath = Application.StartupPath.Replace(@"bin\Debug", @"Images\");
+                File.Copy(txtPath.Text, Path.Combine(imageUploadPath, Path.GetFileName(txtPath.Text)), true);
+                _imageUrl = imageUploadPath + Path.GetFileName(txtPath.Text);
+            }
+        }
+
         #endregion CRUD
 
         #region Mouse Handler
@@ -222,13 +259,17 @@ namespace MappingWithWindowsForm
 
         private void dataGridViewLocationList_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
+            btnDelete.Enabled = true;
+
             _selectedMapName = dataGridViewLocationList.Rows[e.RowIndex].Cells[0].Value.ToString();
             txtLocationName.Text = _selectedMapName;
             using (DatabaseContext context = new DatabaseContext())
             {
                 this.pictureBox1.Controls.Clear();
                 var maps = context.Maps.Where(x => x.MapName == _selectedMapName);
-                pictureBox1.ImageLocation = maps.Select(x => x.ImageUrl).Distinct().FirstOrDefault();
+                var imgUrl = maps.Select(x => x.ImageUrl).Distinct().FirstOrDefault();
+                pictureBox1.ImageLocation = imgUrl;
+                txtPath.Text = imgUrl;
                 foreach (var item in maps.ToList())
                 {
                     Button btn = new Button();
@@ -269,8 +310,6 @@ namespace MappingWithWindowsForm
         private void ClearControls()
         {
             DeleteEmptyRecords();
-            txtLeftX.Text = String.Empty;
-            txtTopY.Text = String.Empty;
             txtLocationName.Text = String.Empty;
             txtPath.Text = String.Empty;
             pictureBox1.ImageLocation = null;
@@ -294,18 +333,5 @@ namespace MappingWithWindowsForm
         }
 
         #endregion Methods
-
-        private void btnImagePath_Click(object sender, EventArgs e)
-        {
-            openFileDialog1.ShowDialog();
-            if (!String.IsNullOrEmpty(openFileDialog1.FileName))
-            {
-                pictureBox1.ImageLocation = openFileDialog1.FileName;
-                txtPath.Text = openFileDialog1.FileName;
-                string imageUploadPath = Application.StartupPath.Replace(@"bin\Debug", @"Images\");
-                File.Copy(txtPath.Text, Path.Combine(imageUploadPath, Path.GetFileName(txtPath.Text)), true);
-                _imageUrl = imageUploadPath + Path.GetFileName(txtPath.Text);
-            }
-        }
     }
 }

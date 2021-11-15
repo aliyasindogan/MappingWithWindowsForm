@@ -34,13 +34,9 @@ namespace MappingWithWindowsForm
             this.btnSave = new System.Windows.Forms.Button();
             this.groupBoxLocation = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.txtLocationName = new System.Windows.Forms.TextBox();
-            this.txtTopY = new System.Windows.Forms.TextBox();
-            this.txtLeftX = new System.Windows.Forms.TextBox();
             this.btnImagePath = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
@@ -58,6 +54,7 @@ namespace MappingWithWindowsForm
             this.dataGridViewLocationList = new System.Windows.Forms.DataGridView();
             this.groupBoxLocationList = new System.Windows.Forms.GroupBox();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnDelete = new System.Windows.Forms.Button();
             this.groupBoxLocation.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -79,7 +76,7 @@ namespace MappingWithWindowsForm
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(600, 20);
+            this.btnSave.Location = new System.Drawing.Point(149, 21);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(89, 23);
             this.btnSave.TabIndex = 0;
@@ -91,20 +88,17 @@ namespace MappingWithWindowsForm
             // 
             this.groupBoxLocation.BackColor = System.Drawing.SystemColors.Control;
             this.groupBoxLocation.Controls.Add(this.label3);
-            this.groupBoxLocation.Controls.Add(this.label2);
             this.groupBoxLocation.Controls.Add(this.label7);
-            this.groupBoxLocation.Controls.Add(this.label1);
             this.groupBoxLocation.Controls.Add(this.txtPath);
             this.groupBoxLocation.Controls.Add(this.txtLocationName);
-            this.groupBoxLocation.Controls.Add(this.txtTopY);
-            this.groupBoxLocation.Controls.Add(this.txtLeftX);
             this.groupBoxLocation.Controls.Add(this.btnNewLocation);
             this.groupBoxLocation.Controls.Add(this.btnImagePath);
             this.groupBoxLocation.Controls.Add(this.btnClear);
+            this.groupBoxLocation.Controls.Add(this.btnDelete);
             this.groupBoxLocation.Controls.Add(this.btnSave);
             this.groupBoxLocation.Location = new System.Drawing.Point(221, 1);
             this.groupBoxLocation.Name = "groupBoxLocation";
-            this.groupBoxLocation.Size = new System.Drawing.Size(873, 125);
+            this.groupBoxLocation.Size = new System.Drawing.Size(873, 94);
             this.groupBoxLocation.TabIndex = 1;
             this.groupBoxLocation.TabStop = false;
             this.groupBoxLocation.Text = "Konum";
@@ -112,42 +106,24 @@ namespace MappingWithWindowsForm
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(389, 26);
+            this.label3.Location = new System.Drawing.Point(15, 66);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(61, 13);
             this.label3.TabIndex = 2;
             this.label3.Text = "Konum Adı:";
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(272, 26);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(39, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Top Y:";
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(95, 77);
+            this.label7.Location = new System.Drawing.Point(364, 66);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(64, 13);
             this.label7.TabIndex = 2;
             this.label7.Text = "Dosya Yolu:";
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(152, 26);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(38, 13);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Left X:";
-            // 
             // txtPath
             // 
-            this.txtPath.Location = new System.Drawing.Point(165, 74);
+            this.txtPath.Location = new System.Drawing.Point(434, 62);
             this.txtPath.Name = "txtPath";
             this.txtPath.ReadOnly = true;
             this.txtPath.Size = new System.Drawing.Size(331, 20);
@@ -155,29 +131,15 @@ namespace MappingWithWindowsForm
             // 
             // txtLocationName
             // 
-            this.txtLocationName.Location = new System.Drawing.Point(456, 22);
+            this.txtLocationName.Location = new System.Drawing.Point(82, 62);
             this.txtLocationName.Name = "txtLocationName";
-            this.txtLocationName.Size = new System.Drawing.Size(138, 20);
+            this.txtLocationName.Size = new System.Drawing.Size(267, 20);
             this.txtLocationName.TabIndex = 1;
-            // 
-            // txtTopY
-            // 
-            this.txtTopY.Location = new System.Drawing.Point(316, 22);
-            this.txtTopY.Name = "txtTopY";
-            this.txtTopY.Size = new System.Drawing.Size(64, 20);
-            this.txtTopY.TabIndex = 1;
-            // 
-            // txtLeftX
-            // 
-            this.txtLeftX.Location = new System.Drawing.Point(196, 22);
-            this.txtLeftX.Name = "txtLeftX";
-            this.txtLeftX.Size = new System.Drawing.Size(64, 20);
-            this.txtLeftX.TabIndex = 1;
             // 
             // btnImagePath
             // 
             this.btnImagePath.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnImagePath.Location = new System.Drawing.Point(498, 73);
+            this.btnImagePath.Location = new System.Drawing.Point(771, 61);
             this.btnImagePath.Name = "btnImagePath";
             this.btnImagePath.Size = new System.Drawing.Size(96, 23);
             this.btnImagePath.TabIndex = 0;
@@ -187,7 +149,7 @@ namespace MappingWithWindowsForm
             // 
             // btnClear
             // 
-            this.btnClear.Location = new System.Drawing.Point(694, 19);
+            this.btnClear.Location = new System.Drawing.Point(244, 21);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(89, 23);
             this.btnClear.TabIndex = 0;
@@ -296,9 +258,9 @@ namespace MappingWithWindowsForm
             // groupBoxMap
             // 
             this.groupBoxMap.Controls.Add(this.pictureBox1);
-            this.groupBoxMap.Location = new System.Drawing.Point(221, 132);
+            this.groupBoxMap.Location = new System.Drawing.Point(221, 101);
             this.groupBoxMap.Name = "groupBoxMap";
-            this.groupBoxMap.Size = new System.Drawing.Size(873, 468);
+            this.groupBoxMap.Size = new System.Drawing.Size(873, 499);
             this.groupBoxMap.TabIndex = 2;
             this.groupBoxMap.TabStop = false;
             this.groupBoxMap.Text = "Harita";
@@ -308,7 +270,7 @@ namespace MappingWithWindowsForm
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBox1.Location = new System.Drawing.Point(3, 16);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(867, 449);
+            this.pictureBox1.Size = new System.Drawing.Size(867, 480);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
@@ -336,6 +298,16 @@ namespace MappingWithWindowsForm
             // openFileDialog1
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
+            // 
+            // btnDelete
+            // 
+            this.btnDelete.Location = new System.Drawing.Point(339, 21);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(89, 23);
+            this.btnDelete.TabIndex = 0;
+            this.btnDelete.Text = "Ayarı Sil";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // Form1
             // 
@@ -374,11 +346,7 @@ namespace MappingWithWindowsForm
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.GroupBox groupBoxLocation;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtLocationName;
-        private System.Windows.Forms.TextBox txtTopY;
-        private System.Windows.Forms.TextBox txtLeftX;
         private System.Windows.Forms.GroupBox groupBoxMap;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.DataGridView dataGridViewLocationList;
@@ -398,6 +366,7 @@ namespace MappingWithWindowsForm
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Button btnImagePath;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btnDelete;
     }
 }
 
